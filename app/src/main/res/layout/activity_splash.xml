@@ -30,15 +30,13 @@
   ~ THE SOFTWARE.
   -->
 
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SplashActivity"
-    android:background="@color/colorAccent"
-    >
+    android:background="@color/colorPrimary"
+    tools:context=".SplashActivity">
 
   <ImageView
       android:id="@+id/imageView"
@@ -61,10 +59,10 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="24dp"
       android:gravity="center_horizontal"
-      android:text="Clothing App"
+      android:text="@string/app_name"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/imageView"/>
+      app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 </android.support.constraint.ConstraintLayout>

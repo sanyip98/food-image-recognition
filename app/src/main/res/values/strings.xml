@@ -29,13 +29,14 @@
   -->
 
 <resources>
-  <string name="app_name">Delicious Food</string>
-  <string name="delicious_food">Delicious Food</string>
-  <string name="not_delicious_food">Not Delicious Food</string>
-  <string name="error_taking_picture">Error taking picture</string>
-  <string name="picture_not_taken">Picture Not Taken!</string>
-  <string name="take_picture">TAKE PICTURE</string>
-  <string name="permission_message">I need permission to take pictures :(</string>
-  <string name="OK">OK</string>
-  <string name="error">Error</string>
+    <string name="app_name">Swapify</string>
+    <string name="delicious_food">Delicious Food</string>
+    <string name="not_delicious_food">Not Delicious Food</string>
+    <string name="error_taking_picture">Error taking picture</string>
+    <string name="picture_not_taken">Picture Not Taken!</string>
+    <string name="take_picture">TAKE PICTURE</string>
+    <string name="permission_message">I need permission to take pictures :(</string>
+    <string name="OK">OK</string>
+    <string name="error">Error</string>
+    <string name="title_activity_logged_in">LoggedInActivity</string>
 </resources>

@@ -30,7 +30,7 @@
   -->
 
 <resources>
-  <color name="colorPrimary">#ff611d</color>
+  <color name="colorPrimary">#D6B5DE</color>
   <color name="colorPrimaryDark">#e32929</color>
   <color name="colorAccent">#D6B5DE</color>
 </resources>
