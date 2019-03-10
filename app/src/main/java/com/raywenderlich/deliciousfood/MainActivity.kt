@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
 
     var btnLogin = findViewById<Button>(R.id.btnLogin)
     btnLogin.setOnClickListener {view ->
-      signIn(view,"user@company.com", "pass")
+      signIn(view,"jane.doe@mail.com", "123456")
     }
 
     camera = Camera.Builder()
