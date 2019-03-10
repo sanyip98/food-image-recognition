@@ -1,27 +1,38 @@
 package com.raywenderlich.deliciousfood
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 
 import kotlinx.android.synthetic.main.activity_logged_in.*
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.label.FirebaseVisionLabelDetectorOptions
+import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceImageLabelerOptions
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.mindorks.paracamera.Camera
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_logged_in.*
+import java.util.stream.Collectors
+import java.util.stream.Stream
+
 
 class LoggedInActivity: AppCompatActivity() {
 
@@ -29,12 +40,41 @@ class LoggedInActivity: AppCompatActivity() {
     var camera: Camera
     private val PERMISSION_REQUEST_CODE = 1
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+
     var fbAuth = FirebaseAuth.getInstance()
+    private var fs: FirebaseStorage? = null
+    private var sr: StorageReference? = null
+    private var filePath: Uri? = null
+    private var s: String? = null
+    private var md: DatabaseReference? = null
 
     override fun onCreate(savedInstanceState: Bundle ? ) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_logged_in)
         setSupportActionBar(toolbar)
+
+        fs = FirebaseStorage.getInstance()
+        sr = fs!!.reference
+//        md!!.keepSynced(true)
+
+//        viewManager = LinearLayoutManager(this)
+//        viewAdapter = MyAdapter(arrayOf("a", "b", "c"))
+//
+//        recyclerView = findViewById<RecyclerView>(R.id.my_text_view).apply {
+//            // use this setting to improve performance if you know that changes
+//            // in content do not change the layout size of the RecyclerView
+//            setHasFixedSize(true)
+//
+//            // use a linear layout manager
+//            layoutManager = viewManager
+//
+//            // specify an viewAdapter (see also next example)
+//            adapter = viewAdapter
+//
+//        }
 
         fab.setOnClickListener {
             view ->
@@ -146,6 +186,7 @@ class LoggedInActivity: AppCompatActivity() {
                 if (bitmap != null) {
                     imageView2.setImageBitmap(bitmap)
                     detectDeliciousFoodOnCloud(bitmap)
+                    loadDatabase(FirebaseDatabase.getInstance().reference)
                 } else {
                     Toast.makeText(this.applicationContext, getString(R.string.picture_not_taken),
                             Toast.LENGTH_SHORT).show()
@@ -153,6 +194,30 @@ class LoggedInActivity: AppCompatActivity() {
             }
         }
     }
+
+//    data class Salad(
+//        val name: String = "",
+//        val description: String = "",
+//        var uuid: String = "")
+
+
+    fun loadDatabase(firebaseData: DatabaseReference) {
+        val availableSalads = hashMapOf(
+                "Anna" to "Fresh and delicious",
+                "Bell" to "Fresh and delicious",
+                "Cat"  to "Fresh and delicious",
+                "Diva" to "Fresh and delicious"
+        )
+        availableSalads.forEach {
+            val key = firebaseData.child("users").push().key
+            key?.let {uuid ->
+//                it.uuid = uuid
+                firebaseData.root.child("users").setValue(uuid)
+//                firebaseData.root.child("users").child(uuid).setValue(it)
+            }
+        }
+    }
+
 
 
     private fun displayResultMessage(hasDeliciousFood: Boolean) {
@@ -179,23 +244,20 @@ class LoggedInActivity: AppCompatActivity() {
         //1
         progressBar.visibility = View.VISIBLE
         val image = FirebaseVisionImage.fromBitmap(bitmap)
-        val options = FirebaseVisionLabelDetectorOptions.Builder()
+        val options = FirebaseVisionOnDeviceImageLabelerOptions.Builder()
                 .setConfidenceThreshold(0.8f)
                 .build()
-        val detector = FirebaseVision.getInstance().getVisionLabelDetector(options)
+        val detector = FirebaseVision.getInstance().getOnDeviceImageLabeler(options)
 
         //2
-        detector.detectInImage(image)
+        detector.processImage(image)
                 //3
                 .addOnSuccessListener {
 
                     progressBar.visibility = View.INVISIBLE
 
-                    println(it.map {
-                        it.label.toString()
-                    });
                     if (hasDeliciousFood(it.map {
-                                it.label.toString()
+                                it.text
                             })) {
                         displayResultMessage(true)
                     } else {
@@ -215,24 +277,30 @@ class LoggedInActivity: AppCompatActivity() {
     private fun detectDeliciousFoodOnCloud(bitmap: Bitmap) {
         progressBar.visibility = View.VISIBLE
         val image = FirebaseVisionImage.fromBitmap(bitmap)
-        val options = FirebaseVisionCloudDetectorOptions.Builder()
-                .setMaxResults(10)
-                .build()
+        val options = FirebaseVisionCloudImageLabelerOptions.Builder().build()
         val detector = FirebaseVision.getInstance()
                 //1
-                .getVisionCloudLabelDetector(options)
+                .getCloudImageLabeler(options)
 
-        detector.detectInImage(image)
+        detector.processImage(image)
                 .addOnSuccessListener {
 
                     progressBar.visibility = View.INVISIBLE
 
-                    println(it.map { it.label.toString() });
-                    if (hasDeliciousFood(it.map { it.label.toString() })) {
-                        displayResultMessage(true)
-                    } else {
-                        displayResultMessage(false)
-                    }
+                    println(it.map { it.text })
+
+                    //      md = FirebaseDatabase.getInstance().reference
+                    //      md!!.child("images").child(uuid).child("tags").setValue(it.map{it.label.toString()})
+
+//                    if (hasDeliciousFood(it.map { it.text })) {
+//                        displayResultMessage(true)
+//                    } else {
+//                        displayResultMessage(false)
+//                    }
+                    responseCardView.visibility = View.VISIBLE
+
+                    responseCardView.setCardBackgroundColor(Color.parseColor("#ffd1dc"))
+                    responseTextView.text = "Tagged as: " + it.map { it.text }.toString().substring(1, it.map { it.text }.toString().length - 1)
 
                 }
                 .addOnFailureListener {
