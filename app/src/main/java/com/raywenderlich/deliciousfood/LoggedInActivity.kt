@@ -42,7 +42,7 @@ class LoggedInActivity: AppCompatActivity() {
                     .setAction("Action", null).show()
         }
 
-        var btnLogOut = findViewById < Button > (R.id.btnLogout)
+        var btnLogOut = findViewById <Button> (R.id.btnLogout)
 
         btnLogOut.setOnClickListener {
             view ->
