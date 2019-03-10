@@ -40,6 +40,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ml.vision.FirebaseVision
@@ -47,17 +48,26 @@ import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionLabelDetectorOptions
 import kotlinx.android.synthetic.main.activity_main.*
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.tasks.OnCompleteListener
 
 class MainActivity : AppCompatActivity() {
 
   private lateinit var camera: Camera
   private val PERMISSION_REQUEST_CODE = 1
+  var fbAuth = FirebaseAuth.getInstance()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
     FirebaseApp.initializeApp(this)
+
+    var btnLogin = findViewById<Button>(R.id.btnLogin)
+    btnLogin.setOnClickListener {view ->
+      signIn(view,"user@company.com", "pass")
+    }
 
     camera = Camera.Builder()
             .resetToCorrectOrientation(true)//1
@@ -67,6 +77,26 @@ class MainActivity : AppCompatActivity() {
             .setImageFormat(Camera.IMAGE_JPEG)//5
             .setCompression(75)//6
             .build(this)
+  }
+
+  fun signIn(view: View,email: String, password: String){
+    showMessage(view,"Authenticating...")
+
+    fbAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
+      if(task.isSuccessful){
+        var intent = Intent(this, LoggedInActivity::class.java)
+        intent.putExtra("id", fbAuth.currentUser?.email)
+        startActivity(intent)
+
+      }else{
+        showMessage(view,"Error: ${task.exception?.message}")
+      }
+    })
+
+  }
+
+  fun showMessage(view:View, message: String){
+    Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE).setAction("Action", null).show()
   }
 
   fun takePicture(view: View) {

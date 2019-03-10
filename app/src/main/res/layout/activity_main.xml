@@ -40,10 +40,10 @@
       android:id="@+id/button"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:background="@android:color/holo_orange_dark"
+      android:background="@android:color/white"
       android:onClick="takePicture"
       android:text="@string/take_picture"
-      android:textColor="@android:color/background_light"
+      android:textColor="@android:color/black"
       android:textSize="18sp"
       android:textStyle="bold"
       app:layout_constraintBottom_toBottomOf="parent"
@@ -69,7 +69,7 @@
           android:id="@+id/responseTextView"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:text="Delicious Food"
+          android:text="Clothing App"
           android:textAlignment="center"
           android:textColor="@android:color/background_light"
           android:textSize="24sp"
@@ -79,7 +79,7 @@
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
-          tools:text="Delicious Food"/>
+          tools:text="Clothing App"/>
     </android.support.constraint.ConstraintLayout>
 
   </android.support.v7.widget.CardView>
@@ -89,13 +89,14 @@
       android:layout_width="0dp"
       android:layout_height="0dp"
       android:adjustViewBounds="true"
+      android:background="@color/colorAccent"
       android:cropToPadding="false"
       android:scaleType="centerCrop"
       android:visibility="visible"
       app:layout_constraintBottom_toTopOf="@+id/button"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent"/>
+      app:layout_constraintTop_toTopOf="parent" />
 
   <ProgressBar
       android:id="@+id/progressBar"
@@ -112,4 +113,15 @@
       app:layout_constraintStart_toStartOf="@+id/imageView"
       app:layout_constraintTop_toTopOf="@+id/imageView"/>
 
+  <Button
+      android:id="@+id/btnLogin"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Login"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:layout_editor_absoluteX="148dp"
+      tools:layout_editor_absoluteY="231dp" />
 </android.support.constraint.ConstraintLayout>
