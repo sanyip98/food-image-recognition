@@ -21,6 +21,7 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionLabelDetectorOptions
 import com.mindorks.paracamera.Camera
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_logged_in.*
 
 class LoggedInActivity: AppCompatActivity() {
 
@@ -143,7 +144,7 @@ class LoggedInActivity: AppCompatActivity() {
             if (requestCode == Camera.REQUEST_TAKE_PHOTO) {
                 val bitmap = camera.cameraBitmap
                 if (bitmap != null) {
-                    imageView.setImageBitmap(bitmap)
+                    imageView2.setImageBitmap(bitmap)
                     detectDeliciousFoodOnCloud(bitmap)
                 } else {
                     Toast.makeText(this.applicationContext, getString(R.string.picture_not_taken),
@@ -226,12 +227,8 @@ class LoggedInActivity: AppCompatActivity() {
 
                     progressBar.visibility = View.INVISIBLE
 
-                    println(it.map {
-                        it.label.toString()
-                    });
-                    if (hasDeliciousFood(it.map {
-                                it.label.toString()
-                            })) {
+                    println(it.map { it.label.toString() });
+                    if (hasDeliciousFood(it.map { it.label.toString() })) {
                         displayResultMessage(true)
                     } else {
                         displayResultMessage(false)
