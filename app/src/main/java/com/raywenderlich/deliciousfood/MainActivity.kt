@@ -43,6 +43,7 @@ import android.view.View
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionLabelDetectorOptions
 import kotlinx.android.synthetic.main.activity_main.*
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  private fun requestPermissions(){
+  private fun requestPermissions() {
     if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun hasPermission(permission: String): Boolean {
     return ActivityCompat.checkSelfPermission(this,
-        permission) == PackageManager.PERMISSION_GRANTED
+            permission) == PackageManager.PERMISSION_GRANTED
   }
 
   override fun onRequestPermissionsResult(requestCode: Int,
@@ -138,7 +139,7 @@ class MainActivity : AppCompatActivity() {
         val bitmap = camera.cameraBitmap
         if (bitmap != null) {
           imageView.setImageBitmap(bitmap)
-          detectDeliciousFoodOnDevice(bitmap)
+          detectDeliciousFoodOnCloud(bitmap)
         } else {
           Toast.makeText(this.applicationContext, getString(R.string.picture_not_taken),
                   Toast.LENGTH_SHORT).show()
@@ -146,7 +147,6 @@ class MainActivity : AppCompatActivity() {
       }
     }
   }
-
 
 
   private fun displayResultMessage(hasDeliciousFood: Boolean) {
@@ -185,6 +185,7 @@ class MainActivity : AppCompatActivity() {
 
               progressBar.visibility = View.INVISIBLE
 
+              println(it.map { it.label.toString() });
               if (hasDeliciousFood(it.map { it.label.toString() })) {
                 displayResultMessage(true)
               } else {
@@ -202,6 +203,34 @@ class MainActivity : AppCompatActivity() {
 
 
   private fun detectDeliciousFoodOnCloud(bitmap: Bitmap) {
-    // TODO: provide an implementation
+    progressBar.visibility = View.VISIBLE
+    val image = FirebaseVisionImage.fromBitmap(bitmap)
+    val options = FirebaseVisionCloudDetectorOptions.Builder()
+            .setMaxResults(10)
+            .build()
+    val detector = FirebaseVision.getInstance()
+            //1
+            .getVisionCloudLabelDetector(options)
+
+    detector.detectInImage(image)
+            .addOnSuccessListener {
+
+              progressBar.visibility = View.INVISIBLE
+
+              println(it.map { it.label.toString() });
+              if (hasDeliciousFood(it.map { it.label.toString() })) {
+                displayResultMessage(true)
+              } else {
+                displayResultMessage(false)
+              }
+
+            }
+            .addOnFailureListener {
+              progressBar.visibility = View.INVISIBLE
+              Toast.makeText(this.applicationContext, getString(R.string.error),
+                      Toast.LENGTH_SHORT).show()
+
+            }
   }
 }
+
