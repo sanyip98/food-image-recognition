@@ -51,7 +51,7 @@ class MainActivity: AppCompatActivity() {
 
     FirebaseApp.initializeApp(this)
 
-    var btnLogin = findViewById < Button > (R.id.btnLogin)
+    var btnLogin = findViewById <Button> (R.id.btnLogin)
     btnLogin.setOnClickListener {
       view ->
       signIn(view, "jane.doe@mail.com", "123456")

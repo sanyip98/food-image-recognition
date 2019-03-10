@@ -39,4 +39,5 @@
     <string name="OK">OK</string>
     <string name="error">Error</string>
     <string name="title_activity_logged_in">LoggedInActivity</string>
+    <string name="welcome_message">Welcome to Swapify!</string>
 </resources>

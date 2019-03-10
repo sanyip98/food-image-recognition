@@ -15,14 +15,14 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/welcome_message"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".LoggedInActivity"
-            android:label="@string/title_activity_logged_in"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <!-- Splash Activity -->
         <activity android:name=".SplashActivity">
